@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import CustomUser
+from .models import CustomUser, CruiseAlert
 from django.contrib.auth.admin import UserAdmin
 
 class CustomUserAdmin(UserAdmin):
@@ -20,3 +20,14 @@ class CustomUserAdmin(UserAdmin):
     ordering = ('email',)
 
 admin.site.register(CustomUser, CustomUserAdmin)
+
+class CruiseAlertAdmin(admin.ModelAdmin):
+    list_display = ('ship_name', 'sail_date', 'purchase_price', 'purchase_type', 'user_email', 'created_at')
+    search_fields = ('ship_name', 'user__email')
+    list_filter = ('purchase_type', 'ship_name')
+
+    def user_email(self, obj):
+        return obj.user.email
+    user_email.short_description = 'User Email'
+
+admin.site.register(CruiseAlert, CruiseAlertAdmin)
