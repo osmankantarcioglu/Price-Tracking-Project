@@ -33,3 +33,10 @@ __pycache__/
 
 # Git backup files
 *.swp
+
+# Render build files
+requirements.txt
+*.pyc
+*.pyo
+*.pyd
+*.log
