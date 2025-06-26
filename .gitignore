@@ -35,7 +35,6 @@ __pycache__/
 *.swp
 
 # Render build files
-requirements.txt
 *.pyc
 *.pyo
 *.pyd
