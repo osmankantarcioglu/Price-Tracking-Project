@@ -1,0 +1,79 @@
+{% extends "accounts/base.html" %}
+{% block title %}Dashboard | CruiseTracker{% endblock %}
+{% block content %}
+<div class="flex justify-between items-center mb-6">
+  <h2 class="text-3xl font-bold text-blue-700">Your Cruise Alerts</h2>
+  <a href="{% url 'logout' %}" class="py-2 px-4 bg-red-500 text-white rounded hover:bg-red-600 font-semibold flex items-center gap-2">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2h4a2 2 0 012 2v1" /></svg>
+    Logout
+  </a>
+</div>
+<form method="post" class="space-y-4 mb-8">
+  {% csrf_token %}
+  <div>
+    <label for="ship_name" class="block font-semibold mb-1">Ship Name</label>
+    <select name="ship_name" id="ship_name" required class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 bg-gray-50">
+      <option value="">Select a ship</option>
+      {% for ship in ship_choices %}
+        <option value="{{ ship }}">{{ ship }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div>
+    <label for="sail_date" class="block font-semibold mb-1">Sail Date</label>
+    <input type="date" id="date_picker" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 bg-gray-50">
+    <input type="text" name="sail_date" id="sail_date" placeholder="e.g., October 2 2025" required readonly class="mt-2 w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 bg-gray-50 cursor-pointer">
+  </div>
+  <div>
+    <label for="purchase_price" class="block font-semibold mb-1">Purchase Price</label>
+    <input type="number" step="0.01" name="purchase_price" id="purchase_price" placeholder="e.g., 1600" required class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 bg-gray-50">
+  </div>
+  <div>
+    <label for="purchase_type" class="block font-semibold mb-1">Room Type</label>
+    <select name="purchase_type" id="purchase_type" required class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 bg-gray-50">
+      <option value="">Select room type</option>
+      <option value="INTERIOR">INTERIOR</option>
+      <option value="OUTSIDE">OUTSIDE</option>
+      <option value="BALCONY">BALCONY</option>
+      <option value="DELUXE">DELUXE</option>
+    </select>
+  </div>
+  <button type="submit" class="w-full py-2 px-4 bg-blue-600 text-white rounded hover:bg-blue-700 font-semibold">Add Alert</button>
+</form>
+
+<script>
+  // Format date as 'Month Day Year' (e.g., October 2 2025)
+  document.getElementById('date_picker').addEventListener('change', function() {
+    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    const date = new Date(this.value);
+    if (!isNaN(date)) {
+      const formatted = `${months[date.getMonth()]} ${date.getDate()} ${date.getFullYear()}`;
+      document.getElementById('sail_date').value = formatted;
+    }
+  });
+</script>
+
+{% if alerts %}
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+  {% for alert in alerts %}
+  <div class="bg-white rounded-xl shadow-lg p-6 flex flex-col gap-2 relative">
+    <div class="absolute top-2 right-2">
+      <form method="post" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit" name="delete_alert" value="{{ alert.id }}" class="p-2 bg-red-500 hover:bg-red-600 text-white rounded-full" title="Delete">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5-4h4a2 2 0 012 2v2H7V5a2 2 0 012-2zm-2 6h8m-4 4v4m0-4v4" /></svg>
+        </button>
+      </form>
+    </div>
+    <div class="text-lg font-semibold text-blue-700">{{ alert.ship_name }}</div>
+    <div class="text-gray-600">Sail Date: <span class="font-medium">{{ alert.sail_date }}</span></div>
+    <div class="text-gray-600">Room Type: <span class="font-medium">{{ alert.purchase_type }}</span></div>
+    <div class="text-gray-600">Purchase Price: <span class="font-medium">${{ alert.purchase_price }}</span></div>
+    <div class="text-gray-400 text-sm">Added: {{ alert.created_at|date:"M d, Y H:i" }}</div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<p class="text-center text-gray-500">No cruise alerts yet. Add one above!</p>
+{% endif %}
+{% endblock %} 

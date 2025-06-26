@@ -1,0 +1,35 @@
+# Virtual environment
+venv/
+env/
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Django migrations
+*/migrations/
+*.sqlite3
+
+# VS Code settings
+.vscode/
+
+# OS files
+.DS_Store
+
+# Env variables
+.env
+
+# Compiled files
+*.pyc
+*.pyd
+*.pyo
+
+# Cache
+*.log
+
+# Railway hidden config (optional)
+.railway/
+
+# Git backup files
+*.swp
